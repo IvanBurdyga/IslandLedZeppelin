@@ -1,0 +1,66 @@
+---
+period: 500
+rows: 20
+cols: 100
+foodMap:
+  Wolf:
+    Horse: 10
+    Deer: 15
+    Rabbit: 60
+    Mouse: 80
+    Goat: 60
+    Sheep: 70
+    Hog: 15
+    Buffalo: 10
+    Duck: 40
+  Snake:
+    Fox: 15
+    Rabbit: 20
+    Mouse: 40
+    Duck: 10
+  Fox:
+    Rabbit: 70
+    Mouse: 90
+    Duck: 60
+    Grub: 40
+  Bear:
+    Snake: 80
+    Horse: 40
+    Deer: 80
+    Rabbit: 80
+    Mouse: 90
+    Goat: 70
+    Sheep: 70
+    Hog: 50
+    Buffalo: 20
+    Duck: 10
+  Eagle:
+    Fox: 10
+    Rabbit: 90
+    Mouse: 90
+    Duck: 80
+  Horse:
+    Grass: 100
+  Deer:
+    Grass: 100
+  Rabbit:
+    Grass: 100
+  Mouse:
+    Grub: 90
+    Grass: 100
+  Goat:
+    Grass: 100
+  Sheep:
+    Grass: 100
+  Hog:
+    Mouse: 50
+    Grub: 90
+    Grass: 100
+  Buffalo:
+    Grass: 100
+  Duck:
+    Grub: 90
+    Grass: 100
+  Grub:
+    Grass: 100
+  Grass: {}
