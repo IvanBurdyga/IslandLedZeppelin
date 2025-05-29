@@ -14,10 +14,10 @@ public class Cell {
     private final Lock lock = new ReentrantLock(true);
     @Getter
     @Setter
-    private Map<String, ArrayList<Organism>> organismMap;
+    private Map<String, HashSet<Organism>> organismMap;
     private final List<Cell> nextCells = new ArrayList<>();
 
-    public Cell(Map<String, ArrayList<Organism>> organismMap) {
+    public Cell(Map<String, HashSet<Organism>> organismMap) {
         this.organismMap = organismMap;
     }
 
@@ -36,9 +36,8 @@ public class Cell {
         }
     }
 
-    public Cell getNextCell() {
-        Random randomCell = new Random();
-        int nextCellNumber = randomCell.nextInt(nextCells.size());
+    public Cell getNextCell(Random random) {
+        int nextCellNumber = random.nextInt(nextCells.size());
         return nextCells.get(nextCellNumber);
     }
 

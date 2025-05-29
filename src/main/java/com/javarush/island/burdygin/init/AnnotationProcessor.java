@@ -15,7 +15,7 @@ public class AnnotationProcessor {
         StatsLimit statsLimit = null;
         if (annotation != null){
             statsLimit = new StatsLimit(annotation.maxWeigh(),
-                    annotation.maxFlockSize(),
+                    annotation.icon(),
                     annotation.maxSpeed(),
                     annotation.maxEat(),
                     annotation.countPerCell(),
@@ -29,7 +29,7 @@ public class AnnotationProcessor {
         Stats annotation = null;
         if(aClass.isAnnotationPresent(Stats.class)){
             annotation = aClass.getAnnotation(Stats.class);
-        };
+        }
         return annotation;
     }
 }

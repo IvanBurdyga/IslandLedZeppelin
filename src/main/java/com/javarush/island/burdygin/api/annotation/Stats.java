@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Stats {
     double maxWeigh();
-    int maxFlockSize();
+    String icon();
     int maxSpeed();
     double maxEat();
     int countPerCell();
