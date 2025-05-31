@@ -6,6 +6,8 @@ import com.javarush.island.burdygin.init.AnnotationProcessor;
 import com.javarush.island.burdygin.init.IslandCreator;
 import com.javarush.island.burdygin.island.Island;
 import com.javarush.island.burdygin.services.EatService;
+import com.javarush.island.burdygin.services.MoveService;
+import com.javarush.island.burdygin.services.SpawnService;
 import com.javarush.island.burdygin.services.ViewService;
 import com.javarush.island.burdygin.services.core.GameCore;
 import com.javarush.island.burdygin.view.ConsoleView;
@@ -19,8 +21,14 @@ public class ConsoleRunner {
         View view = new ConsoleView(island);
         Service viewService = new ViewService(view);
         Service eatService = new EatService(island);
-        List<Service> services = new ArrayList<>(List.of(viewService, eatService));
-        GameCore gameCore = new GameCore(island,services);
+        Service spawnService = new SpawnService(island);
+        Service moveService = new MoveService(island);
+        List<Service> services = new ArrayList<>();
+        services.add(viewService);
+        services.add(eatService);
+        services.add(spawnService);
+        services.add(moveService);
+        GameCore gameCore = new GameCore(services);
         gameCore.gameRun();
     }
 }

@@ -16,7 +16,7 @@ public class ConsoleView implements View {
     @Override
     public void show() {
         printStats();
-//        printMap();
+        printMap();
     }
 
     private void printStats() {

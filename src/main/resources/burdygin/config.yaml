@@ -2,6 +2,7 @@
 period: 500
 rows: 20
 cols: 100
+spawnRate: 30
 foodMap:
   Wolf:
     Horse: 10

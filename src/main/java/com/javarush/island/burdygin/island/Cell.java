@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -36,9 +37,8 @@ public class Cell {
         }
     }
 
-    public Cell getNextCell(Random random) {
+    public Cell getNextCell(ThreadLocalRandom random) {
         int nextCellNumber = random.nextInt(nextCells.size());
         return nextCells.get(nextCellNumber);
     }
-
 }

@@ -7,21 +7,8 @@ import com.javarush.island.burdygin.organisms.Organism;
 import com.javarush.island.burdygin.organisms.StatsLimit;
 
 @Stats(maxWeigh = 1, icon = OrganismIconsConstants.DUCK_ICON, maxSpeed = 4, maxEat = 0.15, countPerCell = 200, animalNumber = 13, name = OrganismNamesConstants.DUCK_NAME)
-public class Duck extends Herbivore{
+public class Duck extends Herbivore {
     public Duck(StatsLimit statsLimit) {
         super(statsLimit);
     }
-
-    @Override
-    public void toEat(Organism organism){
-        if (organism instanceof Grub){
-        } else {
-            super.toEat(organism);
-        }
-    }
-
-    public void toEat(Grub grub){
-
-    }
 }
-//todo eat grub except herbs

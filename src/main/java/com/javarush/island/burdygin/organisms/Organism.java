@@ -3,11 +3,11 @@ package com.javarush.island.burdygin.organisms;
 import com.javarush.island.burdygin.config.Config;
 import com.javarush.island.burdygin.exception.GameException;
 import com.javarush.island.burdygin.island.Cell;
+import com.javarush.island.burdygin.island.Island;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,14 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 public class Organism implements Cloneable {
 
-    @Setter
-    private boolean isDead = false;
-    private double weigh;//todo
-    @Setter
-    private int flockSize;
-    @Setter
-    private int countPerCell;
     private final StatsLimit statsLimit;
+    private final String type = this.getClass().getSimpleName();
 
     public Organism(StatsLimit statsLimit) {
         this.statsLimit = statsLimit;
@@ -30,7 +24,7 @@ public class Organism implements Cloneable {
 
     @Override
     public Organism clone() {
-        Organism cloned = null;
+        Organism cloned;
         try {
             cloned = (Organism) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -39,55 +33,76 @@ public class Organism implements Cloneable {
         return cloned;
     }
 
-    public void eat(Cell cell) {
+    public void safeEat(Cell cell) {
         cell.getLock().lock();
         try {
             AtomicBoolean isSaturation = new AtomicBoolean(false);
             AtomicInteger eaten = new AtomicInteger(0);
-            for (HashSet<Organism> organismHashSet : cell.getOrganismMap().values()) {
-                if (!organismHashSet.isEmpty()) {
-                    Organism organism = organismHashSet.stream().findAny().get();
-                    if (this.canEat(organism) && !isSaturation.get()) {
-                        eaten.set((int) (eaten.get() + organism.statsLimit.maxWeigh()));
-                        if (this.statsLimit.maxEat() <= eaten.get()) {
-                            isSaturation.set(true);
+            cell.getOrganismMap().values().stream()
+                    .filter(Objects::nonNull)
+                    .forEach(organismHashSet -> organismHashSet.stream()
+                            .findAny()
+                            .ifPresent(organism -> {
+                        if (canEat(organism) && !isSaturation.get()) {
+                            eaten.set((int) (eaten.get() + organism.statsLimit.maxWeigh()));
+                            if (statsLimit.maxEat() <= eaten.get()) {
+                                isSaturation.set(true);
+                                organismHashSet.remove(organism);
+                            }
                         }
-                        organism.setDead(true);
-                    }
-                }
-            }
-            cell.getOrganismMap().values().forEach(organismHashSet -> {
-               if (!organismHashSet.isEmpty()){
-                   organismHashSet.forEach(organism -> {
-                       if (organism.isDead()){
-                           organismHashSet.remove(organism);
-                       }
-                   });
-               }
-            });
+                    }));
         } finally {
             cell.getLock().unlock();
         }
     }
 
-
     private boolean canEat(Organism prey) {
-        boolean canEat = false;
         Map<String, Map<String, Integer>> foodMap = Config.getInstance().getFoodMap();
-        Map<String, Integer> stringIntegerMap = foodMap.get("Wolf");//todo
-        if (!stringIntegerMap.isEmpty()){
-            int canEatPercents = ThreadLocalRandom.current().nextInt(1,101);
-            if (stringIntegerMap.get(prey.statsLimit.name()) != null){
-                int test = stringIntegerMap.get(prey.statsLimit.name());
-                if (canEatPercents <= test) {
-                    canEat = true;
-                }
-            }
-
-        }
-        return canEat;
+        Map<String, Integer> stringIntegerMap = foodMap.get(statsLimit.name());//todo
+        return (!stringIntegerMap.isEmpty()
+                && stringIntegerMap.get(prey.statsLimit.name()) != null
+                && getPercent() <= stringIntegerMap.get(prey.statsLimit.name()));
     }
 
-    public void spawn(Organism organism) {
+
+    public Organism spawn(Island island) {
+        return island.getOrganismsSamples().get(getStatsLimit().name()).clone();
+    }
+
+    public int getPercent() {
+        return ThreadLocalRandom.current().nextInt(1, 101);
+    }
+
+    public boolean canSpawn() {
+        return Config.getInstance().getSpawnRate() <= getPercent();
+    }
+
+    public void move(Cell cell) {
+        Cell nextCell = cell.getNextCell(ThreadLocalRandom.current());
+        if (safeAdd(nextCell)) {
+            safeDelete(cell);
+        } else {
+            safeDelete(nextCell);
+        }
+    }
+
+    private boolean safeAdd(Cell nextCell) {
+        nextCell.getLock().lock();
+        try {
+            return nextCell.getOrganismMap().containsKey(getType())
+                    && nextCell.getOrganismMap().get(getType()).size()>statsLimit.maxCountPerCell()
+                    && nextCell.getOrganismMap().get(getType()).add(this);
+        }finally {
+            nextCell.getLock().unlock();
+        }
+    }
+
+    private void safeDelete(Cell cell) {
+        cell.getLock().lock();
+        try {
+            cell.getOrganismMap().get(getType()).remove(this);
+        }finally {
+            cell.getLock().unlock();
+        }
     }
 }

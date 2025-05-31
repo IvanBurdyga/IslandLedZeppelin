@@ -13,14 +13,21 @@ public class Config {
     private int period;
     private int rows;
     private int cols;
-    private Map<String, Map<String, Integer>> foodMap = new HashMap<>();
-    private static final Config instance = new Config();
+    private int spawnRate;
+    private final Map<String, Map<String, Integer>> foodMap = new HashMap<>();
+    private static Config instance;
 
-    private Config() {}
+    private Config() {
+
+    }
 
     public static synchronized Config getInstance() {
-        ConfigReader configReader = new ConfigReader();
-        configReader.read(instance);
+        if (instance == null) {
+            instance = new Config();
+            ConfigReader configReader = new ConfigReader();
+            configReader.read(instance);
+        }
         return instance;
     }
+
 }

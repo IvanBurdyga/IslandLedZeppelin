@@ -68,7 +68,6 @@ public class IslandCreator {
                 for (int i = 0; i < countPerCell; i++) {
                     organismMap.get(s).add(organism.clone());
                 }
-
             } else {
                 organismMap.put(s, new HashSet<>());
             }

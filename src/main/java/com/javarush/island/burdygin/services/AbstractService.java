@@ -6,10 +6,9 @@ import com.javarush.island.burdygin.island.Island;
 import com.javarush.island.burdygin.organisms.Organism;
 import lombok.Getter;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Getter
 public abstract class AbstractService implements Service {
@@ -20,20 +19,15 @@ public abstract class AbstractService implements Service {
         this.island = island;
     }
 
-//    public void process(Cell cell, Consumer<? super Organism> action) {
-//        getOrganismSet(cell).forEach(action);
-
-
-    protected void getOrganismSet(Cell cell, Consumer<? super Organism> action) {
-//        cell.getLock().lock();
-//        try {
-//            cell.getOrganismMap()
-//                    .values()
-//                    .stream()
-//                    .flatMap(Collection::stream)
-//                    .forEach(action);
-//        } finally {
-//            cell.getLock().unlock();
-//        }
+    protected Stream<HashSet<Organism>> getOrganismSet(Cell cell) {
+        cell.getLock().lock();
+        try {
+            return cell.getOrganismMap()
+                    .values()
+                    .stream()
+                    .filter(Objects::nonNull);
+        } finally {
+            cell.getLock().unlock();
+        }
     }
 }

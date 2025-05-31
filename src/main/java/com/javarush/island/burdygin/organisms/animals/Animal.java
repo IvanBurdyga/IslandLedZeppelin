@@ -8,9 +8,5 @@ public abstract class Animal extends Organism {
     public Animal(StatsLimit statsLimit) {
         super(statsLimit);
     }
-
-    public void toEat(Organism organism){
-    }
-
-    private void chooseTheDirectionOfMovement(){}
 }
+
