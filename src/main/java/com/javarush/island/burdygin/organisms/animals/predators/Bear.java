@@ -11,5 +11,4 @@ public class Bear extends Predator {
     public Bear(StatsLimit statsLimit) {
         super(statsLimit);
     }
-
 }

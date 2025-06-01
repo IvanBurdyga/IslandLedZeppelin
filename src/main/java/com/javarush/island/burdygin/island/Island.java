@@ -43,7 +43,6 @@ public class Island {
                             if (name != null){
                                 newStatistic.put(name, i);
                             }
-
                         });
             } finally {
                 cell.getLock().unlock();
@@ -53,12 +52,10 @@ public class Island {
     }
 
     public Stream<Cell> getCellStream() {
-        return getRowStream()
-                .flatMap(Arrays::stream);
+        return getRowStream().flatMap(Arrays::stream);
     }
 
     public Stream<Cell[]> getRowStream() {
         return Arrays.stream(area);
     }
-
 }

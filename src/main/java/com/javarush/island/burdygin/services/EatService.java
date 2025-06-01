@@ -2,7 +2,6 @@ package com.javarush.island.burdygin.services;
 
 import com.javarush.island.burdygin.island.Island;
 
-
 public class EatService extends AbstractService {
 
     private final Island island;

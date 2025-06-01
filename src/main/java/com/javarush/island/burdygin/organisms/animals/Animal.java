@@ -8,6 +8,4 @@ public abstract class Animal extends Organism {
     protected Animal(StatsLimit statsLimit) {
         super(statsLimit);
     }
-
 }
-

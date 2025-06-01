@@ -14,7 +14,6 @@ public class Cell {
     private final Lock lock = new ReentrantLock(true);
     @Getter
     private final Map<String, HashSet<Organism>> organismMap;
-
     private final List<Cell> nextCells = new ArrayList<>();
 
     public Cell(Map<String, HashSet<Organism>> organismMap) {
