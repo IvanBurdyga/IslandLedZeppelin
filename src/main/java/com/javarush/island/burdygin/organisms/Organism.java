@@ -3,11 +3,9 @@ package com.javarush.island.burdygin.organisms;
 import com.javarush.island.burdygin.config.Config;
 import com.javarush.island.burdygin.exception.GameException;
 import com.javarush.island.burdygin.island.Cell;
-import com.javarush.island.burdygin.island.Island;
 import com.javarush.island.burdygin.organisms.plants.Grass;
 import lombok.Getter;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -39,8 +37,8 @@ public class Organism implements Cloneable {
     public void safeEat(Cell cell) {
         cell.getLock().lock();
         try {
-            AtomicBoolean isSaturation = new AtomicBoolean(false);
-            AtomicInteger eaten = new AtomicInteger(0);
+            AtomicBoolean isEatTillFull = new AtomicBoolean(false);
+            AtomicInteger eatenKilograms = new AtomicInteger(0);
             cell.getOrganismMap()
                     .values()
                     .stream()
@@ -48,11 +46,11 @@ public class Organism implements Cloneable {
                     .forEach(organismHashSet -> organismHashSet.stream()
                             .findAny()
                             .ifPresent(organism -> {
-                                if (canEat(organism) && !isSaturation.get()) {
-                                    eaten.set((int) (eaten.get() + organism.statsLimit.maxWeigh()));
+                                if (canEat(organism) && !isEatTillFull.get()) {
+                                    eatenKilograms.set((int) (eatenKilograms.get() + organism.statsLimit.maxWeigh()));
                                     organismHashSet.remove(organism);
-                                    if (statsLimit.maxEat() <= eaten.get()) {
-                                        isSaturation.set(true);
+                                    if (statsLimit.maxEat() <= eatenKilograms.get()) {
+                                        isEatTillFull.set(true);
                                     }
                                 }
                             }));
@@ -63,18 +61,10 @@ public class Organism implements Cloneable {
 
     private boolean canEat(Organism prey) {
         Map<String, Map<String, Integer>> foodMap = Config.getInstance().getFoodMap();
-        Map<String, Integer> stringIntegerMap = foodMap.get(getOrganismTypeName());
-        return !stringIntegerMap.isEmpty()
-                && stringIntegerMap.get(prey.getOrganismTypeName()) != null
-                && getPercent() <= stringIntegerMap.get(prey.getOrganismTypeName());
-    }
-
-    public int getPercent() {
-        return ThreadLocalRandom.current().nextInt(1, 101);
-    }
-
-    public boolean canSpawn() {
-        return Config.getInstance().getSpawnRate() <= getPercent();
+        Map<String, Integer> foodSubMap = foodMap.get(getOrganismTypeName());
+        return !foodSubMap.isEmpty()
+                && foodSubMap.get(prey.getOrganismTypeName()) != null
+                && getPercent() <= foodSubMap.get(prey.getOrganismTypeName());
     }
 
     public void move(Cell cell) {
@@ -87,14 +77,10 @@ public class Organism implements Cloneable {
 
     public void safeMove(Cell cell, Cell nextCell) {
         if (safeAdd(nextCell)) {
-            if (!safeDelete(cell)) {
-                safeDelete(nextCell);
+            if (!safeRemove(cell)) {
+                safeRemove(nextCell);
             }
         }
-    }
-
-    private boolean canMove() {
-        return !(this instanceof Grass);
     }
 
     private boolean safeAdd(Cell cell) {
@@ -108,7 +94,7 @@ public class Organism implements Cloneable {
         }
     }
 
-    private boolean safeDelete(Cell cell) {
+    private boolean safeRemove(Cell cell) {
         cell.getLock().lock();
         try {
             return cell.getOrganismMap()
@@ -117,6 +103,10 @@ public class Organism implements Cloneable {
         } finally {
             cell.getLock().unlock();
         }
+    }
+
+    private boolean canMove() {
+        return !(this instanceof Grass);
     }
 
     public void spawn(Cell cell) {
@@ -129,5 +119,13 @@ public class Organism implements Cloneable {
         } finally {
             cell.getLock().unlock();
         }
+    }
+
+    public boolean canSpawn() {
+        return Config.getInstance().getSpawnRate() <= getPercent();
+    }
+
+    public int getPercent() {
+        return ThreadLocalRandom.current().nextInt(1, 101);
     }
 }

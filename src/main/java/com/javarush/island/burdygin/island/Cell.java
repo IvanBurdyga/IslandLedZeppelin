@@ -2,7 +2,6 @@ package com.javarush.island.burdygin.island;
 
 import com.javarush.island.burdygin.organisms.Organism;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

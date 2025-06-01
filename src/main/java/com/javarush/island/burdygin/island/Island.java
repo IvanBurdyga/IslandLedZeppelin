@@ -4,7 +4,6 @@ import com.javarush.island.burdygin.config.Config;
 import com.javarush.island.burdygin.organisms.Organism;
 import com.javarush.island.burdygin.init.IslandCreator;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.*;
 import java.util.stream.Stream;
