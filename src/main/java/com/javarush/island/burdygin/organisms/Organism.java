@@ -13,9 +13,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 @Getter
 public class Organism implements Cloneable {
-
     private final StatsLimit statsLimit;
     private final String organismTypeName = this.getClass().getSimpleName();
 

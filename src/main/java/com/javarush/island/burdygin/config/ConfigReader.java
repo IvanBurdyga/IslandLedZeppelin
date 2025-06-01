@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.net.URL;
 import java.util.Objects;
 
 @Getter
-@Setter
 public class ConfigReader {
 
     private final String CONFIGURATION_FILE = "burdygin" + File.separator + "config.yaml";
