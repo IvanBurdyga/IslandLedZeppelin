@@ -33,7 +33,7 @@ public class ConsoleView implements View {
         for (int i = 0; i < cells.length; i++) {
             safePrintOneCell(cells[i]);
             if (i == cells.length - 1) {
-                System.out.print("┃");
+                System.out.print(ViewSymbols.VERTICAL_LINE);
                 printHorizontalLine();
             }
         }
