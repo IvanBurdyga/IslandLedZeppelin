@@ -16,4 +16,3 @@ public class EatService extends AbstractService {
         island.getCellStream().forEach(cell -> getOrganismSet(cell).forEach(organism -> organism.safeEat(cell)));
     }
 }
-

@@ -15,4 +15,3 @@ public class MoveService extends AbstractService {
         island.getCellStream().forEach(cell -> getOrganismSet(cell).forEach(organism -> organism.move(cell)));
     }
 }
-
