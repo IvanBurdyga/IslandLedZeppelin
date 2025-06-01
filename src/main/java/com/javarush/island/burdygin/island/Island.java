@@ -4,6 +4,7 @@ import com.javarush.island.burdygin.config.Config;
 import com.javarush.island.burdygin.organisms.Organism;
 import com.javarush.island.burdygin.init.IslandCreator;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -15,10 +16,10 @@ public class Island {
     private final Map<String, Organism> organismsSamples;
 
     public Island(IslandCreator islandCreator) {
-        int COLS = Config.getInstance().getCols();
-        int ROWS = Config.getInstance().getRows();
+        int cols = Config.getInstance().getCols();
+        int rows = Config.getInstance().getRows();
         organismsSamples = islandCreator.organismsSamplesInitialization();
-        area = islandCreator.mapInitialization(ROWS, COLS, organismsSamples);
+        area = islandCreator.mapInitialization(rows, cols, organismsSamples);
     }
 
     public Map<String, Integer> safeUpdateStatistic() {
@@ -26,16 +27,25 @@ public class Island {
         getCellStream().forEach(cell -> {
             cell.getLock().lock();
             try {
-                cell.getOrganismMap().forEach((name, organisms) -> {
-                    int i = 0;
-                    if (newStatistic.containsKey(name)) {
-                        i = newStatistic.get(name);
-                    }
-                    if (!organisms.isEmpty()) {
-                        i = i + organisms.size();
-                    }
-                    newStatistic.put(name, i);
-                });
+                cell.getOrganismMap().values()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .forEach((organisms) -> {
+                            String name = null;
+                            if (organisms.stream()
+                                    .findAny()
+                                    .isPresent()) {
+                                name = organisms.stream().findAny().get().getStatsLimit().name();
+                            }
+                            int i = organisms.size();
+                            if (newStatistic.containsKey(name)) {
+                                i = i + newStatistic.get(name);
+                            }
+                            if (name != null){
+                                newStatistic.put(name, i);
+                            }
+
+                        });
             } finally {
                 cell.getLock().unlock();
             }

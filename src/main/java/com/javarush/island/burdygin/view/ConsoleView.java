@@ -7,7 +7,7 @@ import com.javarush.island.burdygin.island.Island;
 
 public class ConsoleView implements View {
 
-    Island island;
+    private final Island island;
 
     public ConsoleView(Island island) {
         this.island = island;
@@ -21,10 +21,7 @@ public class ConsoleView implements View {
 
     private void printStats() {
         System.out.println();
-        island.safeUpdateStatistic()
-                .forEach((s, value) -> {
-                    System.out.printf("%s = %d ", s, value);
-                });
+        island.safeUpdateStatistic().forEach((s, value) -> System.out.printf("%s = %d ", s, value));
     }
 
     private void printMap() {
@@ -46,19 +43,13 @@ public class ConsoleView implements View {
         System.out.print("\n" + ViewSymbols.HORIZONTAL_LINE.repeat(Config.getInstance().getCols()) + "\n");
     }
 
-
     private void safePrintOneCell(Cell cell) {
         cell.getLock().lock();
         try {
             System.out.printf("%s", ViewSymbols.VERTICAL_LINE);
             cell.getOrganismMap().forEach((s, organisms) -> {
                 if (!organisms.isEmpty()) {
-                    System.out.printf("%s", organisms
-                            .stream()
-                            .findAny()
-                            .get()
-                            .getStatsLimit()
-                            .icon());
+                    System.out.printf("%s", organisms.stream().findAny().get().getStatsLimit().icon());
                 } else {
                     System.out.printf("%s", ViewSymbols.EMPTY_LINE);
                 }

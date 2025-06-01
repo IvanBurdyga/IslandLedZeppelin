@@ -5,19 +5,15 @@ import com.javarush.island.burdygin.island.Island;
 
 public class EatService extends AbstractService {
 
-    Island island;
+    private final Island island;
 
     public EatService(Island island) {
-        super(island);
         this.island = island;
     }
 
     @Override
     public void run() {
-       island.getCellStream()
-               .forEach(cell -> getOrganismSet(cell)
-                       .forEach(organisms -> organisms
-                               .forEach(organism -> organism.safeEat(cell))));
+        island.getCellStream().forEach(cell -> getOrganismSet(cell).forEach(organism -> organism.safeEat(cell)));
     }
 }
 

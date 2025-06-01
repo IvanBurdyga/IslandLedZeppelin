@@ -17,7 +17,7 @@ public class ConfigReader {
 
     private final String CONFIGURATION_FILE = "burdygin" + File.separator + "config.yaml";
 
-    public void read(Config config) {
+    protected void read(Config config) {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         ObjectReader objectReader = objectMapper.readerForUpdating(config);
         URL source = ConfigReader.class.getClassLoader().getResource(CONFIGURATION_FILE);

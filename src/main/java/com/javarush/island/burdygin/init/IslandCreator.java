@@ -6,12 +6,13 @@ import com.javarush.island.burdygin.config.Config;
 import com.javarush.island.burdygin.island.Cell;
 import com.javarush.island.burdygin.organisms.Organism;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class IslandCreator {
 
     private final AnnotationProcessor annotationProcessor;
-
 
     public IslandCreator(AnnotationProcessor annotationProcessor) {
         this.annotationProcessor = annotationProcessor;
@@ -26,7 +27,7 @@ public class IslandCreator {
         }
         for (int row = 0; row < area.length; row++) {
             for (int col = 0; col < area[row].length; col++) {
-                area[row][col].updateNextCells(area, row, col);
+                area[row][col].getNextCells(area, row, col);
             }
         }
         return area;
@@ -43,57 +44,58 @@ public class IslandCreator {
                             aClass = Class.forName(ClassPathsConstants.ORGANISMS_PATH + ClassPathsConstants.PREDATORS_PATH + s);
                     case "buffalo", "deer", "duck", "goat", "grub", "hog", "horse", "mouse", "rabbit", "sheep" ->
                             aClass = Class.forName(ClassPathsConstants.ORGANISMS_PATH + ClassPathsConstants.HERBIVORES_PATH + s);
-                    case "grass" -> aClass = Class.forName(ClassPathsConstants.ORGANISMS_PATH + ClassPathsConstants.PLANTS_PATH + s);
+                    case "grass" ->
+                            aClass = Class.forName(ClassPathsConstants.ORGANISMS_PATH + ClassPathsConstants.PLANTS_PATH + s);
                 }
                 if (aClass != null) {
-                    organismsSamples.put(annotationProcessor.getAnimalName(aClass),
-                            new Organism(annotationProcessor.getStatsLimitFromAnnotation(aClass)));
+                    Constructor<?>[] constructors = aClass.getDeclaredConstructors();
+                    Organism newOrganism = (Organism) constructors[0].newInstance(annotationProcessor.getStatsLimitFromAnnotation(aClass));
+                    organismsSamples.put(s, newOrganism);
                 }
-            } catch (ClassNotFoundException e) {
-                throw new GameException(e,"method organismsSamplesInitialization is failed");
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
+                throw new GameException("method organismsSamplesInitialization is failed");
             }
         }
         return organismsSamples;
     }
 
-    public Map<String, HashSet<Organism>> randomOrganismCellInitialization(Map<String, Organism> organismsSamples) {
+    private Map<String, HashSet<Organism>> randomOrganismCellInitialization(Map<String, Organism> organismsSamples) {
         Random random = new Random();
         Map<String, HashSet<Organism>> organismMap = new HashMap<>();
-        int[] organismTypes = getOrganismTypes(organismsSamples, random);
+        int[] organismTypeNumbers = getStartOrganismTypeNumbersOnCell(organismsSamples, random);
         organismsSamples.forEach((s, organism) -> {
-            boolean currentOrganismNumber = checkCurrentOrganismNumber(organism, organismTypes);
-            if (currentOrganismNumber) {
-                int countPerCell = random.nextInt(1, organism.getStatsLimit().maxCountPerCell());//todo
-                organismMap.put(s, new HashSet<>());
+            organismMap.put(s, new LinkedHashSet<>());
+            if (checkCurrentOrganismNumber(organism, organismTypeNumbers)) {
+                int countPerCell = random.nextInt(1, organism.getStatsLimit().maxCountPerCell());
                 for (int i = 0; i < countPerCell; i++) {
                     organismMap.get(s).add(organism.clone());
                 }
-            } else {
-                organismMap.put(s, new HashSet<>());
             }
         });
         return organismMap;
     }
 
-    private int[] getOrganismTypes(Map<String, Organism> organismsSamples, Random random) {
-        int[] organismTypes = new int[random.nextInt(organismsSamples.size())];
-        for (int i = 0; i < organismTypes.length; i++) {
+    private int[] getStartOrganismTypeNumbersOnCell(Map<String, Organism> organismsSamples, Random random) {
+        int countOrganismTypeNumbers = random.nextInt(organismsSamples.size());
+        int[] organismTypeNumbers = new int[countOrganismTypeNumbers];
+        for (int i = 0; i < organismTypeNumbers.length; i++) {
             while (true) {
-                int intermediateOrganismType = random.nextInt(organismsSamples.size());
-                boolean intermediateOrganismTypeFlag = false;
+                int nextOrganismTypeNumber = random.nextInt(organismsSamples.size());
+                boolean isAdded = false;
                 for (int j = 0; j < i; j++) {
-                    if (organismTypes[j] == intermediateOrganismType) {
-                        intermediateOrganismTypeFlag = true;
+                    if (organismTypeNumbers[j] == nextOrganismTypeNumber) {
+                        isAdded = true;
                         break;
                     }
                 }
-                if (!intermediateOrganismTypeFlag) {
-                    organismTypes[i] = intermediateOrganismType;
+                if (!isAdded) {
+                    organismTypeNumbers[i] = nextOrganismTypeNumber;
                     break;
                 }
             }
         }
-        return organismTypes;
+        return organismTypeNumbers;
     }
 
     private boolean checkCurrentOrganismNumber(Organism organism, int[] organismTypes) {

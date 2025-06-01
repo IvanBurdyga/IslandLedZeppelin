@@ -5,12 +5,7 @@ import com.javarush.island.burdygin.organisms.StatsLimit;
 
 public class AnnotationProcessor {
 
-    public String getAnimalName(Class<?> aClass){
-        Stats annotation = readStatsAnnotation(aClass);
-        return annotation.name();
-    }
-
-    public StatsLimit getStatsLimitFromAnnotation(Class<?> aClass){
+    protected StatsLimit getStatsLimitFromAnnotation(Class<?> aClass){
         Stats annotation = readStatsAnnotation(aClass);
         StatsLimit statsLimit = null;
         if (annotation != null){

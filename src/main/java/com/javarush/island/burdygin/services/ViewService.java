@@ -1,10 +1,9 @@
 package com.javarush.island.burdygin.services;
 
-import com.javarush.island.burdygin.api.service.Service;
 import com.javarush.island.burdygin.api.view.View;
 
-public class ViewService implements Service {
-    View view;
+public class ViewService extends AbstractService {
+    private final View view;
 
     public ViewService(View view) {
         this.view = view;

@@ -18,7 +18,6 @@ public class Config {
     private static Config instance;
 
     private Config() {
-
     }
 
     public static synchronized Config getInstance() {

@@ -9,10 +9,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Stats {
     double maxWeigh();
+
     String icon();
+
     int maxSpeed();
+
     double maxEat();
+
     int countPerCell();
+
     int animalNumber();
+
     String name();
 }

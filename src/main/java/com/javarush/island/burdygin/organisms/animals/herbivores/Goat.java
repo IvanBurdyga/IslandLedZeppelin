@@ -7,6 +7,7 @@ import com.javarush.island.burdygin.organisms.StatsLimit;
 
 @Stats(maxWeigh = 60, icon = OrganismIconsConstants.GOAT_ICON, maxSpeed = 3, maxEat = 10, countPerCell = 140, animalNumber = 9, name = OrganismNamesConstants.GOAT_NAME)
 public class Goat extends Herbivore {
+
     public Goat(StatsLimit statsLimit) {
         super(statsLimit);
     }

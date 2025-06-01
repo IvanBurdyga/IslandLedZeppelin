@@ -5,8 +5,9 @@ import com.javarush.island.burdygin.organisms.StatsLimit;
 
 public abstract class Animal extends Organism {
 
-    public Animal(StatsLimit statsLimit) {
+    protected Animal(StatsLimit statsLimit) {
         super(statsLimit);
     }
+
 }
 
